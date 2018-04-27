@@ -96,4 +96,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void gsonDuzeyineGit(View view) {
+        Intent intent = new Intent(this,Main3Activity.class);
+        startActivity(intent);
+    }
 }
