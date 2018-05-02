@@ -40,6 +40,25 @@ public class Main3Activity extends AppCompatActivity {
 
     public void loadGsonData(View view) {
 
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        String gsonVeri = sharedPreferences.getString("calisan_key","");
+        Log.e("KADİR","Load Data : "+gsonVeri);
+
+        Gson gsonToStr = new Gson();
+        Calisan calisan = gsonToStr.fromJson(gsonVeri,Calisan.class);
+
+        calisanGoster(calisan);
+    }
+
+    private void calisanGoster(Calisan calisan) {
+
+        String goster = calisan.getIsim()+"\n"+
+                calisan.getMeslek()+"\n"+
+                calisan.getGorev()+"\n"+
+                (calisan.getAktif() ? "Çalışıyor" : "Çalışmıyor")+"\n"+
+                "ID = "+calisan.getId();
+
+        tvData.setText(goster);
     }
 
     private void init() {
