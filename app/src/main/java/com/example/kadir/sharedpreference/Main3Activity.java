@@ -8,7 +8,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
 
 public class Main3Activity extends AppCompatActivity {
@@ -38,6 +40,7 @@ public class Main3Activity extends AppCompatActivity {
         editor.apply();
     }
 
+    //Gson ile kaydedilen veriler yine Gson ile Calisan sınıfında bir nesneye çevriliyor.
     public void loadGsonData(View view) {
 
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
@@ -69,11 +72,49 @@ public class Main3Activity extends AppCompatActivity {
 
         Calisan calisan = new Calisan();
         calisan.setIsim("Kadir");
-        calisan.setMeslek("Mühendis");
+        calisan.setMeslek("Yazılımcı");
         calisan.setAktif(true);
         calisan.setGorev(Arrays.asList("Yönetici","Developer"));
         calisan.setId(1);
 
         return calisan;
+    }
+
+
+    public void saveGenericData(View view) {
+
+        Calisan yeniCalisan = calisanOlustur();
+        TumPersoneller<Calisan> personel = new TumPersoneller<>();
+        personel.setObject(yeniCalisan);
+
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        Gson gson = new Gson();
+
+        //Json a dönüştürme işleminde kullanmak için type değişkenine personel nesnesinin type'ını ekliyoruz.
+        Type type = new TypeToken<TumPersoneller<Calisan>>(){}.getType();
+        String jsonStr = gson.toJson(personel,type);
+        editor.putString("generic_type_key",jsonStr);
+
+        editor.apply();
+
+        Log.e("Generic Type : ",""+jsonStr);
+
+    }
+
+
+    public void loadGenericData(View view) {
+
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        String gsonStr = sharedPreferences.getString("generic_type_key","");
+
+        Gson gson = new Gson();
+        Type type = new TypeToken<TumPersoneller<Calisan>>(){}.getType();
+
+        TumPersoneller<Calisan> calisan = gson.fromJson(gsonStr,type);
+        Calisan calisanEleman = calisan.getObject();
+
+        calisanGoster(calisanEleman);
     }
 }
